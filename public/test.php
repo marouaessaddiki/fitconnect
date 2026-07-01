@@ -1,9 +1,18 @@
 <?php
 
-require_once "../config/Database.php";
+require_once "../app/Controllers/AdherentController.php";
 
-$db = new Database();
-$conn = $db->getConnection();
+try {
 
-if ($conn) {
-    echo "Connexion réussie ✅";
+    $controller = new AdherentController();
+
+    $adherents = $controller->index();
+
+    echo "<pre>";
+    print_r($adherents);
+    echo "</pre>";
+
+} catch (Exception $e) {
+
+    echo $e->getMessage();
+}
