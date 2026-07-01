@@ -1,6 +1,8 @@
 <nav>
 
-    <a href="../public/index.php">Dashboard</a>
+    <a href="../public/index.php">
+        Dashboard
+    </a>
 
     <a href="../public/index.php?page=adherents">
         Adhérents
