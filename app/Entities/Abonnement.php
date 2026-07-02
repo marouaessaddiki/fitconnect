@@ -6,30 +6,23 @@ class Abonnement
     private $type;
     private $date_debut;
     private $date_fin;
-    private $adherent_id;
 
     public function __construct(
         $id_abonnement = null,
-        $type = null,
-        $date_debut = null,
-        $date_fin = null,
-        $adherent_id = null
+        $type = "",
+        $date_debut = "",
+        $date_fin = ""
     ) {
         $this->id_abonnement = $id_abonnement;
         $this->type = $type;
         $this->date_debut = $date_debut;
         $this->date_fin = $date_fin;
-        $this->adherent_id = $adherent_id;
     }
 
+    // Getters
     public function getIdAbonnement()
     {
         return $this->id_abonnement;
-    }
-
-    public function setIdAbonnement($id)
-    {
-        $this->id_abonnement = $id;
     }
 
     public function getType()
@@ -37,19 +30,9 @@ class Abonnement
         return $this->type;
     }
 
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
     public function getDateDebut()
     {
         return $this->date_debut;
-    }
-
-    public function setDateDebut($date)
-    {
-        $this->date_debut = $date;
     }
 
     public function getDateFin()
@@ -57,18 +40,19 @@ class Abonnement
         return $this->date_fin;
     }
 
+    // Setters
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    public function setDateDebut($date)
+    {
+        $this->date_debut = $date;
+    }
+
     public function setDateFin($date)
     {
         $this->date_fin = $date;
-    }
-
-    public function getAdherentId()
-    {
-        return $this->adherent_id;
-    }
-
-    public function setAdherentId($id)
-    {
-        $this->adherent_id = $id;
     }
 }

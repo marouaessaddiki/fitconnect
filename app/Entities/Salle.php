@@ -2,25 +2,21 @@
 
 class Salle
 {
-    private $salle_id;
+    private $salleId;
     private $nom;
     private $adresse;
 
-    public function __construct($salle_id = null, $nom = null, $adresse = null)
+    public function __construct($salleId = null, $nom = "", $adresse = "")
     {
-        $this->salle_id = $salle_id;
+        $this->salleId = $salleId;
         $this->nom = $nom;
         $this->adresse = $adresse;
     }
 
+    // Getters
     public function getSalleId()
     {
-        return $this->salle_id;
-    }
-
-    public function setSalleId($salle_id)
-    {
-        $this->salle_id = $salle_id;
+        return $this->salleId;
     }
 
     public function getNom()
@@ -28,14 +24,20 @@ class Salle
         return $this->nom;
     }
 
-    public function setNom($nom)
-    {
-        $this->nom = $nom;
-    }
-
     public function getAdresse()
     {
         return $this->adresse;
+    }
+
+    // Setters
+    public function setSalleId($salleId)
+    {
+        $this->salleId = $salleId;
+    }
+
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
     }
 
     public function setAdresse($adresse)

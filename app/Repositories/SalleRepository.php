@@ -10,59 +10,95 @@ class SalleRepository
     public function __construct()
     {
         $database = new Database();
-        $this->conn = $database->getConnection();
+        $this->conn = $database->connect();
     }
 
+    // Afficher toutes les salles
     public function getAll()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM salle");
+        $sql = "SELECT * FROM salle";
+
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $salles = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+            $salles[] = new Salle(
+                $row['salle_id'],
+                $row['nom'],
+                $row['adresse']
+            );
+        }
+
+        return $salles;
     }
 
+    // Chercher une salle
     public function getById($id)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM salle WHERE salle_id=?");
-        $stmt->execute([$id]);
+        $sql = "SELECT * FROM salle WHERE salle_id = :id";
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':id' => $id
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+
+            return new Salle(
+                $row['salle_id'],
+                $row['nom'],
+                $row['adresse']
+            );
+        }
+
+        return null;
     }
 
+    // Ajouter une salle
     public function create(Salle $salle)
     {
-        $stmt = $this->conn->prepare(
-            "INSERT INTO salle(nom,adresse)
-             VALUES(?,?)"
-        );
+        $sql = "INSERT INTO salle(nom, adresse)
+                VALUES(:nom, :adresse)";
+
+        $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([
-            $salle->getNom(),
-            $salle->getAdresse()
+            ':nom' => $salle->getNom(),
+            ':adresse' => $salle->getAdresse()
         ]);
     }
 
+    // Modifier une salle
     public function update(Salle $salle)
     {
-        $stmt = $this->conn->prepare(
-            "UPDATE salle
-             SET nom=?,adresse=?
-             WHERE salle_id=?"
-        );
+        $sql = "UPDATE salle
+                SET nom = :nom,
+                    adresse = :adresse
+                WHERE salle_id = :id";
+
+        $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([
-            $salle->getNom(),
-            $salle->getAdresse(),
-            $salle->getSalleId()
+            ':nom' => $salle->getNom(),
+            ':adresse' => $salle->getAdresse(),
+            ':id' => $salle->getSalleId()
         ]);
     }
 
+    // Supprimer une salle
     public function delete($id)
     {
-        $stmt = $this->conn->prepare(
-            "DELETE FROM salle WHERE salle_id=?"
-        );
+        $sql = "DELETE FROM salle WHERE salle_id = :id";
 
-        return $stmt->execute([$id]);
+        $stmt = $this->conn->prepare($sql);
+
+        return $stmt->execute([
+            ':id' => $id
+        ]);
     }
 }

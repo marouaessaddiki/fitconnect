@@ -11,27 +11,32 @@ class SalleController
         $this->service = new SalleService();
     }
 
+    // Afficher toutes les salles
     public function index()
     {
         return $this->service->getAll();
     }
 
+    // Afficher une salle
     public function show($id)
     {
         return $this->service->getById($id);
     }
 
+    // Ajouter
     public function store(Salle $salle)
     {
         return $this->service->create($salle);
     }
 
+    // Modifier
     public function update(Salle $salle)
     {
         return $this->service->update($salle);
     }
 
-    public function delete($id)
+    // Supprimer
+    public function destroy($id)
     {
         return $this->service->delete($id);
     }

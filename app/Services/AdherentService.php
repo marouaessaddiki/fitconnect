@@ -1,65 +1,51 @@
 <?php
 
 require_once __DIR__ . '/../Repositories/AdherentRepository.php';
-require_once __DIR__ . '/../Repositories/AbonnementRepository.php';
-require_once __DIR__ . '/../Repositories/SeanceRepository.php';
 
 class AdherentService
 {
-    private $adherentRepo;
-    private $abonnementRepo;
-    private $seanceRepo;
+    private $repository;
 
     public function __construct()
     {
-        $this->adherentRepo = new AdherentRepository();
-        $this->abonnementRepo = new AbonnementRepository();
-        $this->seanceRepo = new SeanceRepository();
+        $this->repository = new AdherentRepository();
     }
 
+    // Récupérer tous les adhérents
     public function getAll()
     {
-        return $this->adherentRepo->getAll();
+        return $this->repository->getAll();
     }
 
-    public function getById($id)
-    {
-        return $this->adherentRepo->getById($id);
-    }
-
+    // Ajouter un adhérent
     public function create(Adherent $adherent)
     {
-        return $this->adherentRepo->create($adherent);
+        if (empty($adherent->getNom())) {
+            throw new Exception("Le nom est obligatoire.");
+        }
+
+        if (!filter_var($adherent->getEmail(), FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Email invalide.");
+        }
+
+        return $this->repository->create($adherent);
     }
 
+    // Chercher par ID
+    public function getById($id)
+    {
+        return $this->repository->getById($id);
+    }
+
+    // Modifier
     public function update(Adherent $adherent)
     {
-        return $this->adherentRepo->update($adherent);
+        return $this->repository->update($adherent);
     }
 
+    // Supprimer
     public function delete($id)
     {
-        $seances = $this->seanceRepo->getByAdherent($id);
-
-        if(count($seances) > 0)
-        {
-            throw new Exception(
-                "Impossible de supprimer cet adhérent : il possède des séances."
-            );
-        }
-
-        $abonnements = $this->abonnementRepo->getByAdherent($id);
-
-        foreach($abonnements as $abonnement)
-        {
-            if($abonnement['date_fin'] >= date('Y-m-d'))
-            {
-                throw new Exception(
-                    "Impossible de supprimer cet adhérent : abonnement actif."
-                );
-            }
-        }
-
-        return $this->adherentRepo->delete($id);
+        return $this->repository->delete($id);
     }
 }

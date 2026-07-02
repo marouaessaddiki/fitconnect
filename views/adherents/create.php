@@ -1,36 +1,239 @@
 <?php
 
-require_once "../views/partials/header.php";
-require_once "../views/partials/navbar.php";
+require_once "../../app/Controllers/AdherentController.php";
+require_once "../../app/Entities/Adherent.php";
 
+$controller = new AdherentController();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $adherent = new Adherent(
+        null,
+        $_POST["nom"],
+        $_POST["prenom"],
+        $_POST["email"],
+        $_POST["telephone"],
+        $_POST["date_inscription"],
+        $_POST["id_abonnement"],
+        $_POST["salle_id"]
+    );
+
+    try {
+        $controller->store($adherent);
+        header("Location: index.php");
+        exit();
+    } catch (Exception $e) {
+        echo "<p style='color:red'>" . $e->getMessage() . "</p>";
+    }
+}
 ?>
 
-<h1>Nouvel adhérent</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un adhérent</title>
 
-<form method="post">
+        <style>
+        :root {
+            --primary: #ff4500;
+            --primary-dark: #d63a00;
+            --secondary: #00e676;
+            --dark: #0d1117;
+            --dark-2: #161b22;
+            --gray: #8b949e;
+            --light: #f5f5f5;
+            --danger: #ff3b3b;
+            --radius: 10px;
+        }
 
-<input type="text" name="nom" placeholder="Nom">
+        * {
+            box-sizing: border-box;
+        }
 
-<br>
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 100%);
+            color: var(--light);
+            min-height: 100vh;
+        }
 
-<input type="text" name="prenom" placeholder="Prénom">
+        h1 {
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 800;
+            font-size: 2rem;
+            color: var(--light);
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
 
-<br>
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
 
-<input type="email" name="email" placeholder="Email">
+        a {
+            text-decoration: none;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+        }
 
-<br>
+        a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 69, 0, 0.45);
+        }
 
-<input type="text" name="telephone" placeholder="Téléphone">
+        body > a[href="index.php"] {
+            background: transparent;
+            border: 2px solid var(--gray);
+            color: var(--gray);
+            box-shadow: none;
+        }
 
-<br>
+        body > a[href="index.php"]:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
 
-<button type="submit">
+        form {
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--dark-2);
+            padding: 35px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-top: 4px solid var(--primary);
+        }
 
-Enregistrer
+        label {
+            display: block;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            margin-top: 15px;
+        }
 
-</button>
+        select,
+        input[type="date"],
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--dark);
+            border: 2px solid #30363d;
+            border-radius: var(--radius);
+            color: var(--light);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        select:focus,
+        input[type="date"]:focus,
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--primary);
+        }
+
+        select option {
+            background: var(--dark-2);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--secondary), #00b359);
+            color: #05130a;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 230, 118, 0.35);
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.5);
+        }
+
+        p[style*="color:red"] {
+            max-width: 480px;
+            margin: 0 auto 15px auto;
+            background: rgba(255, 59, 59, 0.15) !important;
+            border: 1px solid var(--danger);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            color: #ff8080 !important;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Ajouter un adhérent</h1>
+
+<form method="POST">
+
+    <label>Nom :</label><br>
+    <input type="text" name="nom" required><br><br>
+
+    <label>Prénom :</label><br>
+    <input type="text" name="prenom" required><br><br>
+
+    <label>Email :</label><br>
+    <input type="email" name="email" required><br><br>
+
+    <label>Téléphone :</label><br>
+    <input type="text" name="telephone" required><br><br>
+
+    <label>Date d'inscription :</label><br>
+    <input type="date" name="date_inscription" required><br><br>
+
+    <label>ID Abonnement :</label><br>
+    <input type="number" name="id_abonnement" required><br><br>
+
+    <label>ID Salle :</label><br>
+    <input type="number" name="salle_id" required><br><br>
+
+    <button type="submit">Ajouter</button>
 
 </form>
 
-<?php require_once "../views/partials/footer.php"; ?>
+<br>
+
+<a href="index.php">Retour à la liste</a>
+
+</body>
+</html>

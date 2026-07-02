@@ -1,41 +1,21 @@
 <?php
 
-require_once "../../config/Database.php";
-require_once "../../app/Controllers/SeanceController.php";
-require_once "../../app/Entities/Seance.php";
+require_once "../../app/Controllers/SalleController.php";
+require_once "../../app/Entities/Salle.php";
 
-$db = new Database();
-$conn = $db->connect();
-
-$adherents = $conn->query("SELECT id_adherent, nom, prenom FROM adherent")->fetchAll(PDO::FETCH_ASSOC);
-$salles = $conn->query("SELECT salle_id, nom FROM salle")->fetchAll(PDO::FETCH_ASSOC);
-
-$controller = new SeanceController();
-
-if (!isset($_GET['id'])) {
-    die("ID introuvable.");
-}
-
-$id = $_GET['id'];
-
-$seance = $controller->show($id);
-
-if (!$seance) {
-    die("Séance introuvable.");
-}
+$controller = new SalleController();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $seance->setDateSeance($_POST["date"]);
-    $seance->setDuree($_POST["duree"]);
-    $seance->setActivite($_POST["activite"]);
-    $seance->setEquipement($_POST["equipement"]);
-    $seance->setIdAdherent($_POST["id_adherent"]);
-    $seance->setSalleId($_POST["salle_id"]);
+    $salle = new Salle(
+        null,
+        $_POST["nom"],
+        $_POST["adresse"]
+    );
 
     try {
 
-        $controller->update($seance);
+        $controller->store($salle);
 
         header("Location: index.php");
         exit();
@@ -47,13 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 <meta charset="UTF-8">
-<title>Modifier une séance</title>
+<title>Ajouter une salle</title>
 
     <style>
         :root {
@@ -160,8 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         select,
         input[type="date"],
-        input[type="text"],
-        input[type="number"] {
+        input[type="text"] {
             width: 100%;
             padding: 12px 14px;
             background: var(--dark);
@@ -175,8 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         select:focus,
         input[type="date"]:focus,
-        input[type="text"]:focus,
-        input[type="number"]:focus {
+        input[type="text"]:focus {
             border-color: var(--primary);
         }
 
@@ -222,78 +202,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
-<h1>Modifier une séance</h1>
+<h1>Ajouter une salle</h1>
 
 <form method="POST">
 
-<label>Date</label><br>
-<input type="date" name="date"
-value="<?= $seance->getDateSeance(); ?>" required>
+<label>Nom</label><br>
+<input
+type="text"
+name="nom"
+required>
 
 <br><br>
 
-<label>Durée</label><br>
-<input type="number" name="duree"
-value="<?= $seance->getDuree(); ?>" required>
-
-<br><br>
-
-<label>Activité</label><br>
-<input type="text" name="activite"
-value="<?= $seance->getActivite(); ?>" required>
-
-<br><br>
-
-<label>Équipement</label><br>
-<input type="text" name="equipement"
-value="<?= $seance->getEquipement(); ?>">
-
-<br><br>
-
-<label>Adhérent</label><br>
-
-<select name="id_adherent">
-
-<?php foreach($adherents as $adherent): ?>
-
-<option
-value="<?= $adherent['id_adherent']; ?>"
-<?= ($adherent['id_adherent']==$seance->getIdAdherent())?"selected":""; ?>>
-
-<?= $adherent['nom']; ?>
-<?= $adherent['prenom']; ?>
-
-</option>
-
-<?php endforeach; ?>
-
-</select>
-
-<br><br>
-
-<label>Salle</label><br>
-
-<select name="salle_id">
-
-<?php foreach($salles as $salle): ?>
-
-<option
-value="<?= $salle['salle_id']; ?>"
-<?= ($salle['salle_id']==$seance->getSalleId())?"selected":""; ?>>
-
-<?= $salle['nom']; ?>
-
-</option>
-
-<?php endforeach; ?>
-
-</select>
+<label>Adresse</label><br>
+<input
+type="text"
+name="adresse"
+required>
 
 <br><br>
 
 <button type="submit">
 
-Modifier
+Ajouter
 
 </button>
 
@@ -308,4 +239,5 @@ Retour
 </a>
 
 </body>
+
 </html>

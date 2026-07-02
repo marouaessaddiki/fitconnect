@@ -1,18 +1,17 @@
 <?php
 
-require_once "../../app/Controllers/AbonnementController.php";
+require_once "../../app/Controllers/SalleController.php";
 
-$controller = new AbonnementController();
-$abonnements = $controller->index();
+$controller = new SalleController();
+$salles = $controller->index();
 
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Liste des abonnements</title>
+<meta charset="UTF-8">
+<title>Liste des salles</title>
 
     <style>
         :root {
@@ -155,9 +154,11 @@ $abonnements = $controller->index();
 
 <body>
 
-<h1>Liste des abonnements</h1>
+<h1>Liste des salles</h1>
 
-<a href="create.php">Ajouter un abonnement</a>
+<br>
+
+<a href="create.php">Ajouter une salle</a>
 
 <br><br>
 
@@ -165,32 +166,32 @@ $abonnements = $controller->index();
 
 <tr>
     <th>ID</th>
-    <th>Type</th>
-    <th>Date début</th>
-    <th>Date fin</th>
+    <th>Nom</th>
+    <th>Adresse</th>
     <th>Actions</th>
 </tr>
 
-<?php foreach($abonnements as $abonnement): ?>
+<?php foreach($salles as $salle): ?>
 
 <tr>
 
-    <td><?= $abonnement->getIdAbonnement(); ?></td>
-    <td><?= $abonnement->getType(); ?></td>
-    <td><?= $abonnement->getDateDebut(); ?></td>
-    <td><?= $abonnement->getDateFin(); ?></td>
+    <td><?= htmlspecialchars($salle->getSalleId()) ?></td>
+    <td><?= htmlspecialchars($salle->getNom()) ?></td>
+    <td><?= htmlspecialchars($salle->getAdresse()) ?></td>
 
     <td>
 
-        <a href="edit.php?id=<?= $abonnement->getIdAbonnement(); ?>">
+        <a href="edit.php?id=<?= $salle->getSalleId() ?>">
             Modifier
         </a>
 
         |
 
-        <a href="delete.php?id=<?= $abonnement->getIdAbonnement(); ?>"
-           onclick="return confirm('Voulez-vous supprimer cet abonnement ?');">
+        <a href="delete.php?id=<?= $salle->getSalleId() ?>"
+           onclick="return confirm('Voulez-vous supprimer cette salle ?');">
+
             Supprimer
+
         </a>
 
     </td>

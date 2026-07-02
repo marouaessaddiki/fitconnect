@@ -1,18 +1,14 @@
 <?php
 
-require_once "../app/Controllers/AdherentController.php";
+require_once "../app/Controllers/SalleController.php";
 
-try {
+$controller = new SalleController();
 
-    $controller = new AdherentController();
+$salles = $controller->index();
 
-    $adherents = $controller->index();
+foreach ($salles as $salle) {
 
-    echo "<pre>";
-    print_r($adherents);
-    echo "</pre>";
-
-} catch (Exception $e) {
-
-    echo $e->getMessage();
+    echo $salle->getSalleId() . " - ";
+    echo $salle->getNom() . " - ";
+    echo $salle->getAdresse() . "<br>";
 }

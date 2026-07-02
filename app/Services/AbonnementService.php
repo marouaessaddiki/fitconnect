@@ -4,42 +4,52 @@ require_once __DIR__ . '/../Repositories/AbonnementRepository.php';
 
 class AbonnementService
 {
-    private $abonnementRepo;
+    private $repository;
 
     public function __construct()
     {
-        $this->abonnementRepo = new AbonnementRepository();
+        $this->repository = new AbonnementRepository();
     }
 
+    // Afficher tous les abonnements
     public function getAll()
     {
-        return $this->abonnementRepo->getAll();
+        return $this->repository->getAll();
     }
 
+    // Chercher un abonnement
     public function getById($id)
     {
-        return $this->abonnementRepo->getById($id);
+        return $this->repository->getById($id);
     }
 
+    // Ajouter un abonnement
     public function create(Abonnement $abonnement)
     {
-        if($abonnement->getDateFin() < $abonnement->getDateDebut())
-        {
-            throw new Exception(
-                "Date fin invalide."
-            );
+        if (empty($abonnement->getType())) {
+            throw new Exception("Le type d'abonnement est obligatoire.");
         }
 
-        return $this->abonnementRepo->create($abonnement);
+        if ($abonnement->getDateDebut() > $abonnement->getDateFin()) {
+            throw new Exception("La date de début doit être avant la date de fin.");
+        }
+
+        return $this->repository->create($abonnement);
     }
 
+    // Modifier un abonnement
     public function update(Abonnement $abonnement)
     {
-        return $this->abonnementRepo->update($abonnement);
+        if ($abonnement->getDateDebut() > $abonnement->getDateFin()) {
+            throw new Exception("La date de début doit être avant la date de fin.");
+        }
+
+        return $this->repository->update($abonnement);
     }
 
+    // Supprimer
     public function delete($id)
     {
-        return $this->abonnementRepo->delete($id);
+        return $this->repository->delete($id);
     }
 }

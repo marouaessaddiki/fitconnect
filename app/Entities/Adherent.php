@@ -8,15 +8,17 @@ class Adherent
     private $email;
     private $telephone;
     private $date_inscription;
+    private $id_abonnement;
     private $salle_id;
 
     public function __construct(
         $id_adherent = null,
-        $nom = null,
-        $prenom = null,
-        $email = null,
-        $telephone = null,
-        $date_inscription = null,
+        $nom = "",
+        $prenom = "",
+        $email = "",
+        $telephone = "",
+        $date_inscription = "",
+        $id_abonnement = null,
         $salle_id = null
     ) {
         $this->id_adherent = $id_adherent;
@@ -25,17 +27,14 @@ class Adherent
         $this->email = $email;
         $this->telephone = $telephone;
         $this->date_inscription = $date_inscription;
+        $this->id_abonnement = $id_abonnement;
         $this->salle_id = $salle_id;
     }
 
+    // Getters
     public function getIdAdherent()
     {
         return $this->id_adherent;
-    }
-
-    public function setIdAdherent($id)
-    {
-        $this->id_adherent = $id;
     }
 
     public function getNom()
@@ -43,19 +42,9 @@ class Adherent
         return $this->nom;
     }
 
-    public function setNom($nom)
-    {
-        $this->nom = $nom;
-    }
-
     public function getPrenom()
     {
         return $this->prenom;
-    }
-
-    public function setPrenom($prenom)
-    {
-        $this->prenom = $prenom;
     }
 
     public function getEmail()
@@ -63,19 +52,9 @@ class Adherent
         return $this->email;
     }
 
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
     public function getTelephone()
     {
         return $this->telephone;
-    }
-
-    public function setTelephone($telephone)
-    {
-        $this->telephone = $telephone;
     }
 
     public function getDateInscription()
@@ -83,9 +62,9 @@ class Adherent
         return $this->date_inscription;
     }
 
-    public function setDateInscription($date)
+    public function getIdAbonnement()
     {
-        $this->date_inscription = $date;
+        return $this->id_abonnement;
     }
 
     public function getSalleId()
@@ -93,8 +72,39 @@ class Adherent
         return $this->salle_id;
     }
 
-    public function setSalleId($salle_id)
+    // Setters
+    public function setNom($nom)
     {
-        $this->salle_id = $salle_id;
+        $this->nom = $nom;
+    }
+
+    public function setPrenom($prenom)
+    {
+        $this->prenom = $prenom;
+    }
+
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
+
+    public function setTelephone($telephone)
+    {
+        $this->telephone = $telephone;
+    }
+
+    public function setDateInscription($date)
+    {
+        $this->date_inscription = $date;
+    }
+
+    public function setIdAbonnement($id)
+    {
+        $this->id_abonnement = $id;
+    }
+
+    public function setSalleId($id)
+    {
+        $this->salle_id = $id;
     }
 }

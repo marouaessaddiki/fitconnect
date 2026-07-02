@@ -1,116 +1,253 @@
 <?php
-require_once "../views/partials/header.php";
-require_once "../views/partials/navbar.php";
+
+require_once "../../app/Controllers/AdherentController.php";
+require_once "../../app/Entities/Adherent.php";
+
+$controller = new AdherentController();
+
+// Vérifier si l'ID existe
+if (!isset($_GET['id'])) {
+    die("ID introuvable.");
+}
+
+$id = $_GET['id'];
+
+$adherent = $controller->show($id);
+
+if (!$adherent) {
+    die("Adhérent introuvable.");
+}
+
+// Traitement du formulaire
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $adherent->setNom($_POST['nom']);
+    $adherent->setPrenom($_POST['prenom']);
+    $adherent->setEmail($_POST['email']);
+    $adherent->setTelephone($_POST['telephone']);
+    $adherent->setDateInscription($_POST['date_inscription']);
+    $adherent->setIdAbonnement($_POST['id_abonnement']);
+    $adherent->setSalleId($_POST['salle_id']);
+
+    $controller->update($adherent);
+
+    header("Location: index.php");
+    exit();
+}
+
 ?>
 
-<h1>Modifier un Adhérent</h1>
+<!DOCTYPE html>
+<html lang="fr">
 
-<form action="../public/index.php?page=updateAdherent" method="POST">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier un adhérent</title>
 
-    <!-- ID caché -->
-    <input
-        type="hidden"
-        name="id_adherent"
-        value="<?= htmlspecialchars($adherent['id_adherent']) ?>"
-    >
+        <style>
+        :root {
+            --primary: #ff4500;
+            --primary-dark: #d63a00;
+            --secondary: #00e676;
+            --dark: #0d1117;
+            --dark-2: #161b22;
+            --gray: #8b949e;
+            --light: #f5f5f5;
+            --danger: #ff3b3b;
+            --radius: 10px;
+        }
 
-    <label>Nom :</label><br>
+        * {
+            box-sizing: border-box;
+        }
 
-    <input
-        type="text"
-        name="nom"
-        value="<?= htmlspecialchars($adherent['nom']) ?>"
-        required
-    >
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-2) 100%);
+            color: var(--light);
+            min-height: 100vh;
+        }
 
-    <br><br>
+        h1 {
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 800;
+            font-size: 2rem;
+            color: var(--light);
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
 
-    <label>Prénom :</label><br>
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
 
-    <input
-        type="text"
-        name="prenom"
-        value="<?= htmlspecialchars($adherent['prenom']) ?>"
-        required
-    >
+        a {
+            text-decoration: none;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(255, 69, 0, 0.3);
+        }
 
-    <br><br>
+        a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 69, 0, 0.45);
+        }
 
-    <label>Email :</label><br>
+        body > a[href="index.php"] {
+            background: transparent;
+            border: 2px solid var(--gray);
+            color: var(--gray);
+            box-shadow: none;
+        }
 
-    <input
-        type="email"
-        name="email"
-        value="<?= htmlspecialchars($adherent['email']) ?>"
-        required
-    >
+        body > a[href="index.php"]:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
 
-    <br><br>
+        form {
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--dark-2);
+            padding: 35px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-top: 4px solid var(--primary);
+        }
 
-    <label>Téléphone :</label><br>
+        label {
+            display: block;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            margin-top: 15px;
+        }
 
-    <input
-        type="text"
-        name="telephone"
-        value="<?= htmlspecialchars($adherent['telephone']) ?>"
-        required
-    >
+        select,
+        input[type="date"],
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--dark);
+            border: 2px solid #30363d;
+            border-radius: var(--radius);
+            color: var(--light);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
 
-    <br><br>
+        select:focus,
+        input[type="date"]:focus,
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--primary);
+        }
 
-    <label>Date d'inscription :</label><br>
+        select option {
+            background: var(--dark-2);
+        }
 
-    <input
-        type="date"
-        name="date_inscription"
-        value="<?= htmlspecialchars($adherent['date_inscription']) ?>"
-        required
-    >
+        button[type="submit"] {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--secondary), #00b359);
+            color: #05130a;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 230, 118, 0.35);
+        }
 
-    <br><br>
+        button[type="submit"]:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 230, 118, 0.5);
+        }
 
-    <label>Salle :</label><br>
+        p[style*="color:red"] {
+            max-width: 480px;
+            margin: 0 auto 15px auto;
+            background: rgba(255, 59, 59, 0.15) !important;
+            border: 1px solid var(--danger);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            color: #ff8080 !important;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
 
-    <select name="salle_id" required>
+<body>
 
-        <option value="1"
-        <?= ($adherent['salle_id'] == 1) ? 'selected' : '' ?>>
-            Salle 1
-        </option>
+<h1>Modifier un adhérent</h1>
 
-        <option value="2"
-        <?= ($adherent['salle_id'] == 2) ? 'selected' : '' ?>>
-            Salle 2
-        </option>
+<form method="POST">
 
-        <option value="3"
-        <?= ($adherent['salle_id'] == 3) ? 'selected' : '' ?>>
-            Salle 3
-        </option>
+    <label>Nom</label><br>
+    <input type="text" name="nom" value="<?= $adherent->getNom(); ?>" required><br><br>
 
-        <option value="4"
-        <?= ($adherent['salle_id'] == 4) ? 'selected' : '' ?>>
-            Salle 4
-        </option>
+    <label>Prénom</label><br>
+    <input type="text" name="prenom" value="<?= $adherent->getPrenom(); ?>" required><br><br>
 
-    </select>
+    <label>Email</label><br>
+    <input type="email" name="email" value="<?= $adherent->getEmail(); ?>" required><br><br>
 
-    <br><br>
+    <label>Téléphone</label><br>
+    <input type="text" name="telephone" value="<?= $adherent->getTelephone(); ?>" required><br><br>
 
-    <button type="submit">
+    <label>Date d'inscription</label><br>
+    <input type="date" name="date_inscription"
+           value="<?= $adherent->getDateInscription(); ?>" required><br><br>
 
-        Modifier
+    <label>ID Abonnement</label><br>
+    <input type="number" name="id_abonnement"
+           value="<?= $adherent->getIdAbonnement(); ?>" required><br><br>
 
-    </button>
+    <label>ID Salle</label><br>
+    <input type="number" name="salle_id"
+           value="<?= $adherent->getSalleId(); ?>" required><br><br>
 
-    <a href="../public/index.php?page=adherents">
-
-        Annuler
-
-    </a>
+    <button type="submit">Modifier</button>
 
 </form>
 
-<?php
-require_once "../views/partials/footer.php";
-?>
+<br>
+
+<a href="index.php">Retour</a>
+
+</body>
+</html>

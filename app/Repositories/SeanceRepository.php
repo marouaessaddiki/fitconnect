@@ -10,87 +10,114 @@ class SeanceRepository
     public function __construct()
     {
         $database = new Database();
-        $this->conn = $database->getConnection();
+        $this->conn = $database->connect();
     }
 
+    // Afficher toutes les séances
     public function getAll()
     {
-        $stmt = $this->conn->prepare("SELECT * FROM seance");
+        $sql = "SELECT * FROM seance";
+
+        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $seances = [];
+
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+            $seances[] = new Seance(
+                $row['id_seance'],
+                $row['date'],
+                $row['duree'],
+                $row['activite'],
+                $row['equipement'],
+                $row['id_adherent'],
+                $row['salle_id']
+            );
+        }
+
+        return $seances;
     }
 
+    // Chercher une séance par ID
     public function getById($id)
     {
-        $stmt = $this->conn->prepare(
-            "SELECT * FROM seance WHERE id_seance=?"
-        );
+        $sql = "SELECT * FROM seance WHERE id_seance = :id";
 
-        $stmt->execute([$id]);
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            ':id' => $id
+        ]);
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row) {
+            return new Seance(
+                $row['id_seance'],
+                $row['date'],
+                $row['duree'],
+                $row['activite'],
+                $row['equipement'],
+                $row['id_adherent'],
+                $row['salle_id']
+            );
+        }
+
+        return null;
     }
 
-    public function getByAdherent($id)
-    {
-        $stmt = $this->conn->prepare(
-            "SELECT * FROM seance WHERE adherent_id=?"
-        );
-
-        $stmt->execute([$id]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
+    // Ajouter une séance
     public function create(Seance $seance)
     {
-        $stmt = $this->conn->prepare(
-            "INSERT INTO seance
-            (date,duree,activite,equipement,adherent_id,salle_id)
-            VALUES(?,?,?,?,?,?)"
-        );
+        $sql = "INSERT INTO seance(date, duree, activite, equipement, id_adherent, salle_id)
+VALUES(:date, :duree, :activite, :equipement, :id_adherent, :salle_id)";
+
+        $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([
-            $seance->getDate(),
-            $seance->getDuree(),
-            $seance->getActivite(),
-            $seance->getEquipement(),
-            $seance->getAdherentId(),
-            $seance->getSalleId()
+            ':date_' => $seance->getDateSeance(),
+            ':duree' => $seance->getDuree(),
+            ':activite' => $seance->getActivite(),
+            ':equipement' => $seance->getEquipement(),
+            ':id_adherent' => $seance->getIdAdherent(),
+            ':salle_id' => $seance->getSalleId()
         ]);
     }
 
+    // Modifier une séance
     public function update(Seance $seance)
     {
-        $stmt = $this->conn->prepare(
-            "UPDATE seance
-             SET date=?,
-                 duree=?,
-                 activite=?,
-                 equipement=?,
-                 adherent_id=?,
-                 salle_id=?
-             WHERE id_seance=?"
-        );
+        $sql = "UPDATE seance SET
+                    date = :date,
+                    duree = :duree,
+                    activite = :activite,
+                    equipement = :equipement,
+                    id_adherent = :id_adherent,
+                    salle_id = :salle_id
+                WHERE id_seance = :id";
+
+        $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([
-            $seance->getDate(),
-            $seance->getDuree(),
-            $seance->getActivite(),
-            $seance->getEquipement(),
-            $seance->getAdherentId(),
-            $seance->getSalleId(),
-            $seance->getIdSeance()
+            ':date' => $seance->getDateSeance(),
+            ':duree' => $seance->getDuree(),
+            ':activite' => $seance->getActivite(),
+            ':equipement' => $seance->getEquipement(),
+            ':id_adherent' => $seance->getIdAdherent(),
+            ':salle_id' => $seance->getSalleId(),
+            ':id' => $seance->getIdSeance()
         ]);
     }
 
+    // Supprimer une séance
     public function delete($id)
     {
-        $stmt = $this->conn->prepare(
-            "DELETE FROM seance WHERE id_seance=?"
-        );
+        $sql = "DELETE FROM seance WHERE id_seance = :id";
 
-        return $stmt->execute([$id]);
+        $stmt = $this->conn->prepare($sql);
+
+        return $stmt->execute([
+            ':id' => $id
+        ]);
     }
 }

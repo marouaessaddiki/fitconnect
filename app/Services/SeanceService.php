@@ -1,68 +1,55 @@
 <?php
 
 require_once __DIR__ . '/../Repositories/SeanceRepository.php';
-require_once __DIR__ . '/../Repositories/AbonnementRepository.php';
 
 class SeanceService
 {
-    private $seanceRepo;
-    private $abonnementRepo;
+    private $repository;
 
     public function __construct()
     {
-        $this->seanceRepo = new SeanceRepository();
-        $this->abonnementRepo = new AbonnementRepository();
+        $this->repository = new SeanceRepository();
     }
 
+    // Afficher toutes les séances
     public function getAll()
     {
-        return $this->seanceRepo->getAll();
+        return $this->repository->getAll();
     }
 
+    // Chercher une séance
     public function getById($id)
     {
-        return $this->seanceRepo->getById($id);
+        return $this->repository->getById($id);
     }
 
+    // Ajouter
     public function create(Seance $seance)
     {
-        $abonnements = $this->abonnementRepo
-                            ->getByAdherent(
-                                $seance->getAdherentId()
-                            );
-
-        $valide = false;
-
-        foreach($abonnements as $abonnement)
-        {
-            if(
-                date('Y-m-d') >= $abonnement['date_debut']
-                &&
-                date('Y-m-d') <= $abonnement['date_fin']
-            )
-            {
-                $valide = true;
-                break;
-            }
+        if (empty($seance->getActivite())) {
+            throw new Exception("L'activité est obligatoire.");
         }
 
-        if(!$valide)
-        {
-            throw new Exception(
-                "Abonnement expiré. Séance refusée."
-            );
+        if ($seance->getDuree() <= 0) {
+            throw new Exception("La durée doit être supérieure à 0.");
         }
 
-        return $this->seanceRepo->create($seance);
+        return $this->repository->create($seance);
     }
 
+    // Modifier
     public function update(Seance $seance)
     {
-        return $this->seanceRepo->update($seance);
+        if ($seance->getDuree() <= 0) {
+            throw new Exception("La durée doit être supérieure à 0.");
+        }
+
+        return $this->repository->update($seance);
     }
 
+    // Supprimer
     public function delete($id)
     {
-        return $this->seanceRepo->delete($id);
+        return $this->repository->delete($id);
     }
 }

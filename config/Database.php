@@ -7,38 +7,29 @@ class Database
     private $username = "root";
     private $password = "";
 
-    private $connexion = null;
+    private $connection;
 
-    public function getConnection()
+    public function connect()
     {
-        if ($this->connexion == null) {
+        if ($this->connection == null) {
 
             try {
 
-                $this->connexion = new PDO(
+                $this->connection = new PDO(
                     "mysql:host={$this->host};dbname={$this->dbname};charset=utf8",
                     $this->username,
                     $this->password
                 );
 
-                $this->connexion->setAttribute(
-                    PDO::ATTR_ERRMODE,
-                    PDO::ERRMODE_EXCEPTION
-                );
-
-                $this->connexion->setAttribute(
-                    PDO::ATTR_DEFAULT_FETCH_MODE,
-                    PDO::FETCH_ASSOC
-                );
+                $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             } catch (PDOException $e) {
 
                 die("Erreur de connexion : " . $e->getMessage());
 
             }
-
         }
 
-        return $this->connexion;
+        return $this->connection;
     }
 }
