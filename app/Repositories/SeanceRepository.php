@@ -68,22 +68,24 @@ class SeanceRepository
 
     // Ajouter une séance
     public function create(Seance $seance)
-    {
-        $sql = "INSERT INTO seance(date, duree, activite, equipement, id_adherent, salle_id)
-VALUES(:date, :duree, :activite, :equipement, :id_adherent, :salle_id)";
+{
+    $sql = "INSERT INTO seance
+            (date, duree, activite, equipement, id_adherent, salle_id)
+            VALUES
+            (:date, :duree, :activite, :equipement, :id_adherent, :salle_id)";
 
-        $stmt = $this->conn->prepare($sql);
+    $stmt = $this->conn->prepare($sql);
 
-        return $stmt->execute([
-            ':date_' => $seance->getDateSeance(),
-            ':duree' => $seance->getDuree(),
-            ':activite' => $seance->getActivite(),
-            ':equipement' => $seance->getEquipement(),
-            ':id_adherent' => $seance->getIdAdherent(),
-            ':salle_id' => $seance->getSalleId()
-        ]);
-    }
-
+    return $stmt->execute([
+        ':date' => $seance->getDateSeance(),
+        ':duree' => $seance->getDuree(),
+        ':activite' => $seance->getActivite(),
+        ':equipement' => $seance->getEquipement(),
+        ':id_adherent' => $seance->getIdAdherent(),
+        ':salle_id' => $seance->getSalleId()
+    ]);
+}
+ 
     // Modifier une séance
     public function update(Seance $seance)
     {

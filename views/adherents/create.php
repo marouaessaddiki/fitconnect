@@ -221,11 +221,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <label>Date d'inscription :</label><br>
     <input type="date" name="date_inscription" required><br><br>
 
-    <label>ID Abonnement :</label><br>
-    <input type="number" name="id_abonnement" required><br><br>
+    <!-- Abonnement -->
+    <label>Abonnement :</label><br>
+<select name="id_abonnement" required>
+    <option value="">-- Choisir un abonnement --</option>
+    <option value="2">Trimestriel</option>
+    <option value="3">Semestriel</option>
+    <option value="4">Annuel</option>
+    <option value="5">Mensuel</option>
+</select>
 
-    <label>ID Salle :</label><br>
-    <input type="number" name="salle_id" required><br><br>
+<br><br>
+
+<label>Salle :</label><br>
+<select name="salle_id" required>
+    <option value="">-- Choisir une salle --</option>
+    <option value="1">FitConnect Centre</option>
+    <option value="2">FitConnect Maarif</option>
+    <option value="3">FitConnect Agdal</option>
+    <option value="4">FitConnect Gueliz</option>
+    <option value="9">ESSADDIKI</option>
+</select>
+
+    <br><br>
+
+ 
 
     <button type="submit">Ajouter</button>
 
